@@ -1,5 +1,5 @@
 import { User } from '../models/User.js'
-import {validationResult} from 'express-validator'
+import { validationResult } from 'express-validator'
 
 export const deckById = async (req, res) => {
   const userId = req.headers.user
@@ -57,7 +57,8 @@ export const createCard = async (req, res) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() })
-  } try {
+  }
+  try {
     const user = await User.findById(userId)
     const deck = user.decks.id(deckId)
     deck.cards.push(newCard)

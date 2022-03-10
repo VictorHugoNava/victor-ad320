@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, { useState } from "react"
 import { Button, Stack, TextField } from "@mui/material"
 import axios from 'axios'
 
@@ -6,10 +6,10 @@ const CreateFlashcard = ({ userId, deckId }) => {
   console.log(`[CreateFlashcard] deckId is ${deckId}`)
   const [formValue, setFormValue] = useState({})
   const [errors, setErrors] = useState({
-    'frontText': 'Front text input error',
-    'frontImage': 'Front image url error',
-    'backText': 'Back text input error',
-    'backImage': 'Back image url error'
+    frontText: null,
+    frontImage: null,
+    backText: null,
+    backImage: null
   })
 
   const isUrl = (value) => {
@@ -21,7 +21,7 @@ const CreateFlashcard = ({ userId, deckId }) => {
     const fieldValueTrimmed = fieldValue.trim()
     if (fieldValueTrimmed === '') {
       return 'Field cannot be empty'
-    } else if(fieldName === "frontImage" || fieldName === "backImage") {
+    } else if (fieldName === "frontImage" || fieldName === "backImage") {
       const validateUrl = fieldName.isUrl()
       if (validateUrl === false) {
         return 'Invalid Url entered'
@@ -34,14 +34,15 @@ const CreateFlashcard = ({ userId, deckId }) => {
     event.preventDefault()
     console.log("[CreateFlashcard] onChange ", event)
     if (validateProperty(event.target.name, event.target.value)) {
-    const currentValues = formValue
-    currentValues[event.target.name] = event.target.value
-    setFormValue(currentValues)
-  } else {
-    setErrors(formValue)
-    return ' event handling error, one or more card fields contains invalid information'
+      const currentValues = formValue
+      currentValues[event.target.name] = event.target.value
+      setFormValue(currentValues)
+    } else {
+      setErrors(formValue)
+      return ' event handling error, one or more card fields contains invalid information'
+    }
   }
-}
+  
   const handleSubmit = async (event) => {
     console.log("[CreateFlashcard] onSubmit ", event)
     event.preventDefault()
@@ -50,8 +51,6 @@ const CreateFlashcard = ({ userId, deckId }) => {
       console.log(`[createflashcard] response submit ${response.status}`)
     } catch (err) {
       console.log(`response error ${err.status}`)
-    } if (err.status) {
-      return 'Deck not found'
     }
   }
 
