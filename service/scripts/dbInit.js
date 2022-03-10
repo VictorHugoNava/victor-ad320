@@ -27,7 +27,8 @@ const initDB = async () => {
       lastName: user.lastName,
       decks: user.decks,
       email: user.email,
-      password: v4()
+      password: v4(),
+      active: true
     })
   }
 
