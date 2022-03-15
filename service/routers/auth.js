@@ -79,13 +79,17 @@ export const verifyToken = async (req, res, next) => {
   if (authParts[0] !== 'Bearer' || authParts.length < 2) {
     res.status(400).send('Bad authentication token')
   } else if (authParts[1]) {
-    const decoded = await jwt.verify(authParts[1], process.env.JWT_SECRET)
-    req.user = {
-      userId: decoded.user,
-      other: decoded.otherData
+    try {
+      const decoded = await jwt.verify(authParts[1], process.env.JWT_SECRET)
+      req.user = {
+        userId: decoded.user,
+        other: decoded.otherData
+      }
+      next()
+    } catch (error) {
+      res.status(401).send('Authentication failed')
     }
-    next()
   } else {
-    res.status(401).send('Authentication failed')
+    res.status(401).send('Bad token')
   }
 }
