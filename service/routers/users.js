@@ -31,7 +31,6 @@ const getUsersById = async (req, res) => {
   const requestor = await User.findById(userId)
   if (requestor.role === 'admin' || requestor.role === 'superuser' ||
     requestor._id.toString() === req.params.id.toString()) {
-    const user = await User.findById(req.params.id)
     const arr = sanitizeUsers([user])
     res.send(arr[0])
   } else {
@@ -42,12 +41,10 @@ const getUsersById = async (req, res) => {
 const updateUser = async (req, res) => {
   const { userId } = req.user
   const requestor = await User.findById(userId)
-  if (requestor.role === 'admin') {
-    const result = await User.findByIdAndUpdate(req.params.id, req.body)
-    res.send('Success: user updated. ', result)
-  } else if (requestor.role === 'superuser' || requestor._id.toString() === req.params.id.toString()) {
-    const result = await User.findByIdAndUpdate(req.params.id, req.body)
-    res.send('Success: user updated. ', result)
+  const result = await User.findByIdAndUpdate(req.params.id, req.body)
+  const status = res.send('Success: user updated. ', result)
+  if (requestor.role === 'admin' || requestor.role === 'superuser' || requestor._id.toString() === req.params.id.toString()) {
+    return status
   } else {
     res.status(403).send('Forbidden')
   }
@@ -57,12 +54,12 @@ const deleteUser = async (req, res) => {
   const { userId } = req.user
   const requestor = await User.findById(userId)
   const user = await User.findById(req.params.id)
+  const result = await User.findByIdAndDelete(user)
+  const status = res.send('Success: user deleted. ', result)
   if (requestor.role === 'admin') {
-    const result = await User.findByIdAndDelete(user)
-    res.send('Success: user deleted. ', result)
-  } else if (requestor.role === 'superuser' && user === userId) {
-    const result = await User.findByIdAndDelete(user)
-    res.send('Success: user deleted. ', result)
+    return status
+  } else if (requestor.role === 'superuser' && requestor._id === user._id) {
+    return status
   } else if (requestor.role === 'user' && req.params.id === userId) {
     const result = await User.findByIdAndUpdate(user, { active: false })
     res.send('Success: user update, deactivated. ', result)
