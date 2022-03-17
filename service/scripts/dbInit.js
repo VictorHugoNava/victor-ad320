@@ -1,8 +1,10 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import mongoose from 'mongoose'
-import { Deck } from '../models/Deck.js'
+import { v4 } from 'uuid'
+import { User } from '../models/User.js'
 
-import decks from '../testData/decks.json'
-import cards from '../testData/cards.json'
+import users from './users.json'
 
 const sleepAndQuit = new Promise((resolve) => {
   setTimeout(() => {
@@ -19,34 +21,20 @@ const initDB = async () => {
     console.log('error ', err)
   }
 
-  const deckDocs = []
-
-  for (const deck of decks) {
-    const newDeck = await Deck.create({
-      name: deck.name,
-      size: 0,
-      userId: new mongoose.Types.ObjectId()
+  for (const user of users) {
+    await User.create({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      decks: user.decks,
+      email: user.email,
+      password: v4(),
+      active: true
     })
-    deckDocs.push(newDeck)
   }
-
-  for (const card of cards) {
-    deckDocs[card.deck_id % 10].cards.push({
-      frontImage: card.front_image,
-      frontText: card.front_text,
-      backImage: card.back_image,
-      backText: card.back_text
-    })
-    deckDocs[card.deck_id % 10].size++
-  }
-
-  deckDocs.forEach(async (deck) => {
-    await deck.save()
-  })
 
   await sleepAndQuit
 
-  console.log('finished saving decks')
+  console.log('finished saving users')
 }
 
 initDB()
