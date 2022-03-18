@@ -19,9 +19,13 @@ const Login = () => {
     // care about validation or more complex persistence, we can rely on
     // the event data itself and an object in React called FormData
     const data = new FormData(event.currentTarget)
-    login(data.get('email'), data.get('password'), () => {
-      navigate(source, { replace: true })
-    })
+    try {
+      login(data.get('email'), data.get('password'), () => {
+        navigate(source, { replace: true })
+      })
+    } catch {
+      return <Navigate to="/login" />
+    }
   }
 
   if (auth) {

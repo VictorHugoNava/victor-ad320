@@ -25,8 +25,22 @@ const AuthProvider = ({ children }) => {
         }
     }
 
-    const register = (email, password, callback) => { 
-        // Assignment: how do we register someone?  
+    const register = async (email, password, callback) => { 
+        // Assignment: how do we register someone? 
+        console.log("[Register]")
+        try{
+            const registerResponse = await axios.post(
+                'http://localhost:8000/auth/register', 
+                { email: email, password: password }, 
+                { 'content-type': 'application/json' }
+            )
+            const decoded = jwt(registerResponse.data.token)
+            setAuth({ token: registerResponse.data.token, user: decoded.user })
+            callback()
+        } catch (err) {
+            console.log(`Registration error ${err}`)
+            alert('Email and/or password not recognized')
+        }
     }
 
     const authCtx = {
