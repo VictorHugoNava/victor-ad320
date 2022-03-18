@@ -28,7 +28,8 @@ const initDB = async () => {
       decks: user.decks,
       email: user.email,
       password: v4(),
-      active: true
+      active: true,
+      role: user.role ?? 'user'
     })
   }
 

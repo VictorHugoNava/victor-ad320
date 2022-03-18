@@ -1,8 +1,9 @@
 import React from "react"
-import { AppBar, Button, IconButton, Toolbar, Typography } from "@mui/material"
+import { AppBar, IconButton, Toolbar, Typography } from "@mui/material"
 import MenuIcon from "@mui/icons-material/Menu"
+import AuthButtons from "./AuthButtons"
 
-function Topbar({ createCardHandler }) {
+function Topbar() {
   return (
     <AppBar position="static">
       <Toolbar variant="dense">
@@ -17,9 +18,7 @@ function Topbar({ createCardHandler }) {
         <Typography variant="h6" color="inherit" component="div" sx={{ flexGrow: 1 }}>
           Notoriety
         </Typography>
-        <Button color="inherit" onClick={createCardHandler}>
-          Add Card
-        </Button>
+        <AuthButtons />
       </Toolbar>
     </AppBar>
   )

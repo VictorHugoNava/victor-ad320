@@ -1,12 +1,12 @@
 import { Router } from 'express'
 import { body } from 'express-validator'
 import { User } from '../models/User.js'
+import { validator } from '../middlewares/validation.js'
 
 const decksRouter = Router()
 
 const getDecks = async (req, res) => {
-  const { userId, other } = req.user
-  console.log(`Other data from the token ${other}`)
+  const { userId } = req.user
   try {
     const user = await User.findById(userId)
     if (user) {
@@ -25,16 +25,12 @@ const createDeck = async (req, res) => {
   const newDeck = req.body
   try {
     const user = await User.findById(userId)
-    if (user) {
-      user.decks.push({
-        name: newDeck.name,
-        cards: []
-      })
-      await user.save()
-      res.sendStatus(204)
-    } else {
-      res.sendStatus(404)
-    }
+    user.decks.push({
+      name: newDeck.name,
+      cards: []
+    })
+    await user.save()
+    res.sendStatus(204)
   } catch (err) {
     console.log(`${createDeck.name}: ${err}`)
     res.sendStatus(500)
@@ -47,15 +43,11 @@ const createCard = async (req, res) => {
   const newCard = req.body
   try {
     const user = await User.findById(userId)
-    if (user) {
-      const deck = user.decks.id(deckId)
-      deck.cards.push(newCard)
-      await user.save()
-      const newId = deck.cards[deck.cards.length - 1]
-      res.status(200).send(newId._id)
-    } else {
-      res.sendStatus(404)
-    }
+    const deck = user.decks.id(deckId)
+    deck.cards.push(newCard)
+    await user.save()
+    const newId = deck.cards[deck.cards.length - 1]
+    res.status(200).send(newId._id)
   } catch (err) {
     console.log(`${createCard.name}: ${err}`)
     res.sendStatus(500)
@@ -66,17 +58,11 @@ const deleteDeck = async (req, res) => {
   const userId = ''
   const deckId = req.params.id
   try {
-    const user = await User.find({ "decks._id": req.params.id })
-    const requestor = await User.findById(userId)
-    if (requestor.role === 'admin' || (requestor.role === 'superuser' && requestor._id === user._id) ||
-      (requestor.role === 'user' && requestor._id === user._id)) {
-      const removedDeck = user.decks.id(deckId).remove()
-      console.log(removedDeck)
-      user.save()
-      res.sendStatus(204)
-    } else {
-      res.sendStatus(404)
-    }
+    const user = await User.findById(userId)
+    const removedDeck = user.decks.id(deckId).remove()
+    console.log(removedDeck)
+    user.save()
+    res.sendStatus(204)
   } catch (err) {
     console.log(`${deleteDeck.name}: ${err}`)
     res.sendStatus(500)
@@ -88,17 +74,11 @@ const updateDeck = async (req, res) => {
   const deckId = req.params.id
   const newDeck = req.body
   try {
-    const user = await User.find({ "decks._id": req.params.id })
-    const requestor = await User.findById(userId)
-    if (requestor.role === 'admin' || (requestor.role === 'superuser' && requestor._id === user._id) ||
-      (requestor.role === 'user' && requestor._id === user._id)) {
-      const deck = user.decks.id(deckId)
-      deck.name = newDeck.name
-      await user.save()
-      res.sendStatus(204)
-    } else {
-      res.sendStatus(404)
-    }
+    const user = await User.findById(userId)
+    const deck = user.decks.id(deckId)
+    deck.name = newDeck.name
+    await user.save()
+    res.sendStatus(204)
   } catch (err) {
     console.log(`${updateDeck.name}: ${err}`)
     res.sendStatus(500)
@@ -106,10 +86,11 @@ const updateDeck = async (req, res) => {
 }
 
 decksRouter.get('/', getDecks)
-decksRouter.post('/', body('name').not().isEmpty(), createDeck)
+decksRouter.post('/', body('name').not().isEmpty(), validator, createDeck)
 decksRouter.put(
   '/:id',
   body('name').not().isEmpty(),
+  validator,
   updateDeck
 )
 decksRouter.delete('/:id', deleteDeck)
@@ -120,6 +101,7 @@ decksRouter.post(
   body('frontText').not().isEmpty(),
   body('backImage').isURL(),
   body('backText').not().isEmpty(),
+  validator,
   createCard
 )
 
