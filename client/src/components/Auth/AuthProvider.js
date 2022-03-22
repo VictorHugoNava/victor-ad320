@@ -7,12 +7,12 @@ const AuthContext = React.createContext(null)
 const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState(null)
 
-    const login = async (email, password, callback) => { 
+    const login = async (email, password, callback) => {
         console.log("[Login]")
-        try{
+        try {
             const authResponse = await axios.post(
-                'http://localhost:8000/auth/login', 
-                { email: email, password: password }, 
+                'http://localhost:8000/auth/login',
+                { email: email, password: password },
                 { 'content-type': 'application/json' }
             )
             const decoded = jwt(authResponse.data.token)
@@ -21,25 +21,21 @@ const AuthProvider = ({ children }) => {
         } catch (err) {
             console.log(`Login error ${err}`)
             alert('Email and/or password not recognized')
-            // Assignment: what should we do if this fails?
         }
     }
 
-    const register = async (email, password, callback) => { 
-        // Assignment: how do we register someone? 
+    const register = async (email, password, callback) => {
         console.log("[Register]")
-        try{
+        try {
             const registerResponse = await axios.post(
-                'http://localhost:8000/auth/register', 
-                { email: email, password: password }, 
+                'http://localhost:8000/auth/register',
+                { email: email, password: password },
                 { 'content-type': 'application/json' }
             )
-            const decoded = jwt(registerResponse.data.token)
-            setAuth({ token: registerResponse.data.token, user: decoded.user })
             callback()
         } catch (err) {
             console.log(`Registration error ${err}`)
-            alert('Email and/or password not recognized')
+            alert('Email and/or password not valid')
         }
     }
 

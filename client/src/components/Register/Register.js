@@ -1,11 +1,11 @@
 import React from 'react'
 import { Button, Box, TextField, Typography } from '@mui/material'
 import { useAuth } from '../Auth/AuthProvider'
-import { Navigate, useNavigate, useLocation } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 const Register = () => {
-  // Assignment: use the useAuth hook here to handle registering a new user
   const { auth, register } = useAuth()
+  const navigate = useNavigate()
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -15,7 +15,7 @@ const Register = () => {
       password: data.get('password'),
     })
     register(data.get('email'), data.get('password'), () => {
-      <Navigate to="/login" />
+      navigate("/login", { replace: true })
     })
   }
 
