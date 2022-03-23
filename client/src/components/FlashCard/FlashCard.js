@@ -1,19 +1,47 @@
 import React from 'react'
-import './FlashCard.css'
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Typography
+} from '@mui/material'
 
-function FlashCard() {
-    return (
-        <div className='card'>
-            <img src='https://placekitten.com/200/200' />
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                    Curabitur sit amet felis elit. Nunc in volutpat tortor. 
-                    Praesent ut sem eget diam auctor sollicitudin a vitae leo. 
-                    Vivamus scelerisque neque vitae tortor varius tempor eget eu 
-                    mi. Curabitur sit amet velit enim. Praesent convallis mollis 
-                    mi vitae cursus. 
-                </p>
-        </div>
-    )
+function Flashcard({ content, previous, next, flip }) {
+  return (
+    <Box sx={{ width: '100%', mt: 8, display: 'flex', justifyContent: 'space-around'}}>
+      <Card sx={{ width: '40vw' }} elevation={3}>
+        { content.image && <CardMedia
+          component="img"
+          height="200"
+          image={content.image} />}
+        <CardContent>
+          <Typography>{content.text ?? ''}</Typography>
+        </CardContent>
+        <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Button
+            sx={{ mx: 2 }}
+            onClick={ () => previous() }
+            variant="outlined"
+          >
+            Prev
+          </Button>
+          <Button sx={{ mx: 2 }} variant="outlined" onClick={() => flip()}>
+            Flip
+          </Button>
+          <Button
+            sx={{ mx: 2 }}
+            onClick={ () => next() }
+            variant="outlined"
+          >
+            Next
+          </Button>
+        </CardActions>
+      </Card>
+    </Box>
+  )
 }
 
-export default FlashCard
+export default Flashcard
