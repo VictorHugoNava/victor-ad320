@@ -19,7 +19,7 @@ const Register = () => {
     })
   }
 
-  if (!auth) {
+  if (auth) {
     return <Navigate to="/register" />
   }
 
@@ -62,7 +62,7 @@ const Register = () => {
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >
-          Sign In
+          Register
         </Button>
       </Box>
     </Box>
